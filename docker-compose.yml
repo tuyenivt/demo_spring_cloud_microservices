@@ -1,0 +1,60 @@
+version: '3.6'
+services:
+  config-server:
+    build:
+      context: ./config-service
+      dockerfile: Dockerfile
+    image: config-server:latest
+    #restart: on-failure
+    expose:
+      - 8088
+  discovery-service:
+    build:
+      context: ./discovery-service
+      dockerfile: Dockerfile
+    image: discovery-service:latest
+    #restart: on-failure
+    expose:
+      - 8061
+    depends_on:
+      - config-server
+  employee-service:
+    build:
+      context: ./employee-service
+      dockerfile: Dockerfile
+    image: employee-service:latest
+    #restart: on-failure
+    expose:
+      - 8090
+    depends_on:
+      - discovery-service
+  department-service:
+    build:
+      context: ./department-service
+      dockerfile: Dockerfile
+    image: department-service:latest
+    #restart: on-failure
+    expose:
+      - 8091
+    depends_on:
+      - discovery-service
+  organization-service:
+    build:
+      context: ./organization-service
+      dockerfile: Dockerfile
+    image: organization-service:latest
+    #restart: on-failure
+    expose:
+      - 8092
+    depends_on:
+      - discovery-service
+  proxy-service:
+    build:
+      context: ./proxy-service
+      dockerfile: Dockerfile
+    image: proxy-service:latest
+    #restart: on-failure
+    ports:
+      - 8060:8060
+    depends_on:
+      - discovery-service
